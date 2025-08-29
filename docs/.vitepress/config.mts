@@ -45,8 +45,8 @@ export default defineConfig({
           facetFilters: []
         },
         locales: {
-          zh: {
-            placeholder: '搜索文档',
+          root: {
+            placeholder: '搜索文档或向 AI 提问',
             translations: {
               button: { buttonText: '搜索文档', buttonAriaLabel: '搜索文档' },
               modal: {
@@ -55,9 +55,9 @@ export default defineConfig({
                   clearButtonAriaLabel: '清除查询条件',
                   closeButtonText: '关闭',
                   closeButtonAriaLabel: '关闭',
-                  placeholderText: '搜索文档',
+                  placeholderText: '搜索文档或向 AI 提问',
                   placeholderTextAskAi: '向 AI 提问：',
-                  placeholderTextAskAiStreaming: '回答中...',
+                  placeholderTextAskAiStreaming: '思考中...',
                   searchInputLabel: '搜索',
                   backToKeywordSearchButtonText: '返回关键字搜索',
                   backToKeywordSearchButtonAriaLabel: '返回关键字搜索'
@@ -78,13 +78,13 @@ export default defineConfig({
                 },
                 noResultsScreen: {
                   noResultsText: '无法找到相关结果',
-                  suggestedQueryText: '你可以尝试查询',
-                  reportMissingResultsText: '你认为该查询应该有结果？',
+                  suggestedQueryText: '您可以尝试查询',
+                  reportMissingResultsText: '您认为该查询应该有结果？',
                   reportMissingResultsLinkText: '点击反馈'
                 },
                 resultsScreen: { askAiPlaceholder: '向 AI 提问： ' },
                 askAiScreen: {
-                  disclaimerText: '答案由 AI 生成，可能不准确，请自行验证。',
+                  disclaimerText: '负责生成回答的 AI 也可能犯错，请注意核查回复。',
                   relatedSourcesText: '相关来源',
                   thinkingText: '思考中...',
                   copyButtonText: '复制',
@@ -92,16 +92,16 @@ export default defineConfig({
                   copyButtonTitle: '复制',
                   likeButtonTitle: '赞',
                   dislikeButtonTitle: '踩',
-                  thanksForFeedbackText: '感谢你的反馈！',
+                  thanksForFeedbackText: '感谢您的反馈！',
                   preToolCallText: '搜索中...',
                   duringToolCallText: '搜索 ',
                   afterToolCallText: '已搜索'
                 },
                 footer: {
-                  selectText: '选择',
+                  selectText: '查看',
                   submitQuestionText: '提交问题',
                   selectKeyAriaLabel: 'Enter 键',
-                  navigateText: '切换',
+                  navigateText: '选择',
                   navigateUpKeyAriaLabel: '向上箭头',
                   navigateDownKeyAriaLabel: '向下箭头',
                   closeText: '关闭',
