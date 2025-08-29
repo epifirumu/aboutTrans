@@ -35,11 +35,11 @@ export default defineConfig({
     search: {
       provider: 'algolia',
       options: {
-        appId: 'KC9PIGEXUW',
-        apiKey: 'e38aa16c6e13667ccb1cb7a03069aa1f',
+        appId: '116OHOGKSO',
+        apiKey: 'e7394e55ca3575018010fdc93e1f0662',
         indexName: 'index_ab_vitepress_crawls',
         askAi: {
-          assistantId: 'LGsLW0x1ShDf'
+          assistantId: 'LPOC8VnwcNjG'
         },
         searchParameters: {
           facetFilters: []
