@@ -22,6 +22,11 @@
   font-weight: 400 !important;
 }
 
+
+.DocSearch-Button-Placeholder {
+  font-weight: 500 !important;
+}
+
 .DocSearch-Button-Keys {
   display: none;
 }
