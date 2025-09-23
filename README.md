@@ -1,26 +1,27 @@
-## 🚀 离线部署
+## 🚀 本地部署
 
 1. 克隆仓库
-```bash
+
+```
 git clone https://github.com/AB-aboutTrans/aboutTrans.git
 ```
 
 2. 安装依赖
 
-```bash
+```
 cd aboutTrans
 npm i
 ```
 
-3. 本地运行
+3. 启动开发服务器
 
-```bash
+```
 npm run docs:dev
 ```
 
 ## 📂 项目结构
 
-```bash
+```
 .
 ├── docs
 │   ├── index.md ---------- 主页
