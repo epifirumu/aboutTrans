@@ -26,15 +26,14 @@ jobs:
 
       - name: Deploy to Cloudflare Pages
         id: deploy-pages-preview
-        continue-on-error: true  # Allow continuation to comment on failure
         uses: cloudflare/wrangler-action@v3
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy docs/.vitepress/dist --project-name=${{ vars.CF_WORKERS_PROJECT_NAME }} --branch=${{ github.head_ref }}
+          apiToken: ${{ secrets.CLOUDFLARE_PAGES_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_PAGES_ACCOUNT || secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy docs/.vitepress/dist --project-name=${{ vars.CF_WORKERS_PROJECT_NAME || 'aboutrans' }} --branch=${{ github.head_ref }}
 
-      - name: Draft success comment
-        if: ${{ steps.deploy-pages-preview.outcome == 'success' }}
+      - name: Draft build success comment
+        if: ${{ steps.install-deps.outcome == 'success' && steps.build-project.outcome == 'success' && steps.deploy-pages-preview.outcome == 'success' }}
         env:
           PAGES_DEPLOYMENT_URL: ${{ steps.deploy-pages-preview.outputs.deployment-url }}
           PAGES_BRANCH_URL: ${{ steps.deploy-pages-preview.outputs.pages-deployment-alias-url }}
@@ -53,8 +52,8 @@ jobs:
           </table>
           EOF
 
-      - name: Draft failure comment
-        if: ${{ steps.deploy-pages-preview.outcome != 'success' }}
+      - name: Or draft another comment in case of failure
+        if: ${{ failure() || steps.install-deps.outcome != 'success' || steps.build-project.outcome != 'success' || steps.deploy-pages-preview.outcome != 'success' }}
         env:
           WORKFLOW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
@@ -63,8 +62,12 @@ jobs:
           The build or deployment to Cloudflare Pages failed. Check the [workflow logs]($WORKFLOW_RUN_URL) for details.
           EOF
 
-      - name: Comment Preview Build Result on Pull Request
-        if: always()  # Post comment even if any step fails
+      - name: Submit comment of preview deployment's result on Pull Request
+        if: always()
         run: gh pr comment ${{ github.event.number }} --body-file /dev/shm/comment.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Mark job status as failed if any critical step remains unfinished
+        if: ${{ failure() || steps.install-deps.outcome != 'success' || steps.build-project.outcome != 'success' || steps.deploy-pages-preview.outcome != 'success' }}
+        run: exit 1
