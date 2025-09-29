@@ -1,0 +1,70 @@
+name: Deploy Preview on PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        id: install-deps
+        run: npm ci
+
+      - name: Build project
+        id: build-project
+        run: npm run docs:build
+
+      - name: Deploy to Cloudflare Pages
+        id: deploy-pages-preview
+        continue-on-error: true  # Allow continuation to comment on failure
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy docs/.vitepress/dist --project-name=${{ vars.CF_WORKERS_PROJECT_NAME }} --branch=${{ github.head_ref }}
+
+      - name: Draft success comment
+        if: ${{ steps.deploy-pages-preview.outcome == 'success' }}
+        env:
+          PAGES_DEPLOYMENT_URL: ${{ steps.deploy-pages-preview.outputs.deployment-url }}
+          PAGES_BRANCH_URL: ${{ steps.deploy-pages-preview.outputs.pages-deployment-alias-url }}
+        run: |
+          cat << EOF > /dev/shm/comment.md
+          ## 🚀 Preview Deployment for ${{ github.event.repository.name }} with Cloudflare Pages
+          <table>
+              <tr>
+              <th scope="row">Pages Preview URL</th>
+              <td><a href="$PAGES_DEPLOYMENT_URL" target="_blank" rel="noopener noreferrer">$PAGES_DEPLOYMENT_URL</a></td>
+              </tr>
+              <tr>
+              <th scope="row">Pages Branch URL</th>
+              <td><a href="$PAGES_BRANCH_URL" target="_blank" rel="noopener noreferrer">$PAGES_BRANCH_URL</a></td>
+              </tr>
+          </table>
+          EOF
+
+      - name: Draft failure comment
+        if: ${{ steps.deploy-pages-preview.outcome != 'success' }}
+        env:
+          WORKFLOW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          cat << EOF > /dev/shm/comment.md
+          ## ❌ Preview Deployment Failed for ${{ github.event.repository.name }}
+          The build or deployment to Cloudflare Pages failed. Check the [workflow logs]($WORKFLOW_RUN_URL) for details.
+          EOF
+
+      - name: Comment Preview Build Result on Pull Request
+        if: always()  # Post comment even if any step fails
+        run: gh pr comment ${{ github.event.number }} --body-file /dev/shm/comment.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
