@@ -85,3 +85,9 @@
 .VPLocalNavOutlineDropdown > div.items {
   border-radius: 12px;
 }
+
+@media (max-width: 960px) {
+  div.VPNavBar.top > .divider > div {
+    background-color: transparent !important;
+  }
+}
