@@ -88,6 +88,8 @@
 
 @media (max-width: 960px) {
   div.VPNavBar.top > .divider > div {
+    color: transparent !important;
     background-color: transparent !important;
+    display: none !important;
   }
 }
