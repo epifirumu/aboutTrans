@@ -8,6 +8,7 @@
   --vp-button-brand-hover-bg: var(--vp-c-brand-1);
   --vp-button-brand-active-border: var(--vp-c-brand-2);
   --vp-button-brand-active-bg: var(--vp-c-brand-2);
+  --appearance-transition-duration: 0.5s;
 }
 
 .VPFeature,
@@ -90,4 +91,21 @@
   div.VPNavBar.top > .divider {
     display: none;
   }
+}
+
+html.appearance-transitioning,
+html.appearance-transitioning body {
+  transition:
+    background-color var(--appearance-transition-duration) ease,
+    color var(--appearance-transition-duration) ease;
+}
+
+html.appearance-transitioning :where(*):not(.appearance-transition-disable) {
+  transition:
+    background-color var(--appearance-transition-duration) ease,
+    color var(--appearance-transition-duration) ease,
+    border-color var(--appearance-transition-duration) ease,
+    box-shadow var(--appearance-transition-duration) ease,
+    fill var(--appearance-transition-duration) ease,
+    stroke var(--appearance-transition-duration) ease !important;
 }
