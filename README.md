@@ -1,5 +1,7 @@
 ## 🚀 本地部署
 
+> 需安装 Git、Node.js、npm
+
 1. 克隆仓库
 
 ```
@@ -9,7 +11,6 @@ git clone https://github.com/AB-aboutTrans/aboutTrans.git
 2. 安装依赖
 
 ```
-cd aboutTrans
 npm i
 ```
 
