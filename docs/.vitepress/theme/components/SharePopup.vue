@@ -145,9 +145,15 @@ onUnmounted(() => {
   display: flex;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
   font-family: var(--vp-font-family-base);
   color: var(--vp-c-text-1);
+}
+
+.share-card :deep(mark) {
+  animation-delay: -1ms;
+  animation-duration: 1ms;
+  animation-iteration-count: 1;
 }
 
 .card-content {
