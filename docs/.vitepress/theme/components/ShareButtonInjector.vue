@@ -1,22 +1,27 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, watch, createApp } from 'vue'
+import { onMounted, onUnmounted, watch, createApp, type App } from 'vue'
 import { useRoute } from 'vitepress'
 import { openShare } from './shareState'
 import InjectedShareButton from './InjectedShareButton.vue'
 
 const route = useRoute()
 let observer: MutationObserver | null = null
+let bodyObserver: MutationObserver | null = null
+// Track mounted app instances to properly unmount them later
+const mountedApps: App[] = []
+
+const getDocContainer = () => {
+  return document.querySelector('.vp-doc') || 
+         document.querySelector('.VPDoc') || 
+         document.querySelector('main')
+}
 
 const injectButtonToH2 = (h2: HTMLHeadingElement) => {
   if (h2.classList.contains('share-btn-processed')) return
   h2.classList.add('share-btn-processed')
 
-  const container = document.createElement('div')
+  const container = document.createElement('span')
   container.className = 'share-btn-container'
-  // Style is now handled in CSS or here
-  container.style.display = 'flex'
-  container.style.justifyContent = 'flex-start'
-  container.style.marginTop = '10px'
 
   const btn = document.createElement('span')
   btn.className = 'share-btn-injected'
@@ -61,57 +66,32 @@ const injectButtonToH2 = (h2: HTMLHeadingElement) => {
   // Mount the Share Button Component
   const app = createApp(InjectedShareButton, { onClick: handleShare })
   app.mount(btn)
+  mountedApps.push(app)
   
   container.appendChild(btn)
   
-  // Insert container after the h2
-  if (h2.nextSibling) {
-    h2.parentNode?.insertBefore(container, h2.nextSibling)
-  } else {
-    h2.parentNode?.appendChild(container)
-  }
+  // Insert container at the end of h2
+  h2.appendChild(container)
 }
 
 const scanAndInject = () => {
   if (!route.path.startsWith('/docs/')) return
 
-  // Try multiple selectors for better compatibility
-  const doc = document.querySelector('.vp-doc') || 
-              document.querySelector('.VPDoc') || 
-              document.querySelector('main')
-              
-  if (!doc) {
-    console.warn('[ShareInjector] Doc container not found')
-    return
-  }
+  const doc = getDocContainer()
+  if (!doc) return
 
   const h2s = doc.querySelectorAll('h2')
-  if (h2s.length > 0) {
-    console.log(`[ShareInjector] Found ${h2s.length} h2 elements`)
-    h2s.forEach(h2 => injectButtonToH2(h2))
-  }
+  h2s.forEach(h2 => injectButtonToH2(h2))
 }
 
-const initObserver = () => {
-  if (typeof window === 'undefined') return
-  
-  // Cleanup old observer
+const observeDocContainer = (doc: Element) => {
+  // Cleanup old doc observer
   if (observer) observer.disconnect()
-
-  const doc = document.querySelector('.vp-doc') || 
-              document.querySelector('.VPDoc') || 
-              document.querySelector('main')
-  
-  // If doc not ready, try again shortly
-  if (!doc) {
-    setTimeout(initObserver, 500)
-    return
-  }
   
   // Initial scan
   scanAndInject()
 
-  // Watch for changes
+  // Watch for changes inside the doc container
   observer = new MutationObserver(() => {
     scanAndInject()
   })
@@ -119,19 +99,48 @@ const initObserver = () => {
   observer.observe(doc, { childList: true, subtree: true })
 }
 
+const initObserver = () => {
+  if (typeof window === 'undefined') return
+  
+  // Cleanup old observers
+  if (observer) observer.disconnect()
+  if (bodyObserver) bodyObserver.disconnect()
+
+  const doc = getDocContainer()
+  
+  if (doc) {
+    // Doc container exists, observe it directly
+    observeDocContainer(doc)
+  } else {
+    // Doc container not ready, watch body for its appearance
+    bodyObserver = new MutationObserver(() => {
+      const doc = getDocContainer()
+      if (doc) {
+        bodyObserver?.disconnect()
+        bodyObserver = null
+        observeDocContainer(doc)
+      }
+    })
+    
+    bodyObserver.observe(document.body, { childList: true, subtree: true })
+  }
+}
+
 onMounted(() => {
-  console.log('[ShareInjector] Mounted')
-  // Wait a bit for layout
-  setTimeout(initObserver, 500)
+  initObserver()
 })
 
 onUnmounted(() => {
   if (observer) observer.disconnect()
+  if (bodyObserver) bodyObserver.disconnect()
+  // Clean up all mounted app instances to prevent memory leaks
+  mountedApps.forEach(app => app.unmount())
+  mountedApps.length = 0
 })
 
 watch(() => route.path, () => {
-  // Re-init on route change
-  setTimeout(initObserver, 500)
+  // Re-init on route change, MutationObserver will handle async content
+  initObserver()
 })
 </script>
 
@@ -153,13 +162,18 @@ watch(() => route.path, () => {
 }
 
 .share-btn-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 10px;
-  margin-bottom: 20px;
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
 }
 
 .share-btn-injected:hover {
   opacity: 1;
+}
+
+/* Make h2 a flex container for natural alignment */
+.vp-doc h2.share-btn-processed {
+  display: flex;
+  align-items: center;
 }
 </style>

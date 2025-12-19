@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, watch, nextTick, onUnmounted } from 'vue'
 import { shareState, closeShare } from './shareState'
-import { useData } from 'vitepress'
 
-const { site } = useData()
 const cardRef = ref<HTMLElement | null>(null)
 const state = reactive({
   qrCodeUrl: '',
@@ -93,7 +91,7 @@ onUnmounted(() => {
                 <div class="date">{{ formatDate() }}</div>
               </div>
               <div class="qr-code" v-if="state.qrCodeUrl">
-                <img v-if="state.qrCodeUrl" :src="state.qrCodeUrl" alt="QR Code" />
+                <img :src="state.qrCodeUrl" alt="QR Code" />
               </div>
             </div>
           </div>
@@ -182,6 +180,7 @@ onUnmounted(() => {
   margin-bottom: 30px;
   display: -webkit-box;
   -webkit-line-clamp: 10;
+  line-clamp: 10;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -202,7 +201,7 @@ onUnmounted(() => {
 .site-logo {
   display: flex;
   align-items: center;
-  color: #e5006a;
+  color: var(--vp-c-brand-0);
   font-weight: 800;
   font-size: 24px;
   letter-spacing: -0.5px;
