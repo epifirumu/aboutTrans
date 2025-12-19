@@ -1,7 +1,7 @@
 import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
-import 'virtual:uno.css'
 import './style.css'
+import 'virtual:uno.css'
 import { h } from 'vue'
 import { Share, SharePopup, ShareButtonInjector, registerComponents } from './components'
 import '@nolebase/vitepress-plugin-enhanced-mark/client/style.css'
