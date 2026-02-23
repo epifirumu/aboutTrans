@@ -102,3 +102,7 @@
 .DocSearch-Action.DocSearch-AskAi-Return {
   background-color: transparent !important;
 }
+
+.VPNavBarSearchButton {
+  display: none !important;
+}
