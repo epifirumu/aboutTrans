@@ -73,11 +73,21 @@ export default defineConfig({
     search: {
       provider: 'algolia',
       options: {
-        appId: '116OHOGKSO',
-        apiKey: 'ac690e86bfae8e8965ca0eb54624758b',
+        appId: 'KC9PIGEXUW',
+        apiKey: 'e38aa16c6e13667ccb1cb7a03069aa1f',
         indexName: 'index_ab_vitepress_crawls',
         askAi: {
-          assistantId: 'LPOC8VnwcNjG'
+          assistantId: 'LGsLW0x1ShDf',
+          sidePanel: {
+            // 镜像 @docsearch/sidepanel-js SidepanelProps API
+            panel: {
+              variant: 'floating', // 或 'inline'
+              side: 'right',
+              width: '360px',
+              expandedWidth: '580px',
+              suggestedQuestions: true,
+            }
+          }
         },
         searchParameters: {
           facetFilters: []
