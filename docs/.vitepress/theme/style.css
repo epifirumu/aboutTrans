@@ -10,36 +10,36 @@
   --vp-button-brand-active-bg: var(--vp-c-brand-2);
 }
 
-.DocSearch-Button-Keys,
-.DocSearch-Help,
-.DocSearch-NoResults-Prefill-List-Items p,
-.DocSearch-AskAiScreen-RelatedSources,
-.DocSearch-AskAiScreen-Answer-Footer,
-.DocSearch-StreamingIndicator,
-.DocSearch-Menu-trigger.DocSearch-Action,
-.DocSearch-Action.DocSearch-StopStreaming,
-.DocSearch-Divider,
-.DocSearch-AskAiScreen-MessageContent-Tool.Tool--Result,
 .DocSearch-Action[title="Conversation history"],
 .DocSearch-Action[title="Start a new conversation"],
-.vp-doc .header-anchor:before,
-.DocSearch-Sidepanel-Screen--introduction {
+.DocSearch-Action.DocSearch-StopStreaming,
+.DocSearch-AskAiScreen-Answer-Footer,
+.DocSearch-AskAiScreen-MessageContent-Tool.Tool--Result,
+.DocSearch-AskAiScreen-RelatedSources,
+.DocSearch-Button-Keys,
+.DocSearch-Divider,
+.DocSearch-Help,
+.DocSearch-Menu-trigger.DocSearch-Action,
+.DocSearch-NoResults-Prefill-List-Items p,
+.DocSearch-Sidepanel-Screen--introduction,
+.DocSearch-StreamingIndicator,
+.vp-doc .header-anchor:before {
   display: none !important;
 }
 
-.DocSearch-Action.DocSearch-Sidepanel-Action-expand,
-.DocSearch-Action.DocSearch-Sidepanel-Action-close,
-.DocSearch-Action.DocSearch-Close,
 .DocSearch-Action.DocSearch-AskAi-Return,
+.DocSearch-Action.DocSearch-Close,
+.DocSearch-Action.DocSearch-Sidepanel-Action-close,
+.DocSearch-Action.DocSearch-Sidepanel-Action-expand,
 .DocSearch-Sidepanel-Prompt--submit,
 .VPNavBarAskAiButton {
   background-color: transparent !important;
 }
 
-.VPFeature,
-.VPSwitch,
 .DocSearch-Button,
-.link {
+.link,
+.VPFeature,
+.VPSwitch {
   border-color: transparent !important;
 }
 
@@ -48,11 +48,11 @@
   border-color: var(--vp-c-divider) !important;
 }
 
-.DocSearch-Input,
-.DocSearch-Clear,
 .DocSearch-AskAiScreen-Disclaimer,
-.DocSearch-Title,
-.DocSearch-Modal-heading.shimmer {
+.DocSearch-Clear,
+.DocSearch-Input,
+.DocSearch-Modal-heading.shimmer,
+.DocSearch-Title {
   font-weight: 400 !important;
 }
 
@@ -60,8 +60,8 @@
   font-weight: 500 !important;
 }
 
-.footnotes,
-.DocSearch-AskAiScreen-Disclaimer {
+.DocSearch-AskAiScreen-Disclaimer,
+.footnotes {
   font-size: 14px !important;
 }
 
@@ -98,9 +98,9 @@
   height: unset !important;
 }
 
-.dark .VPHome .VPFeature,
 .dark .DocSearch-Sidepanel-Content,
-.dark .profile {
+.dark .profile,
+.dark .VPHome .VPFeature {
   background-color: rgba(37, 37, 41, 0.5) !important;
 }
 
