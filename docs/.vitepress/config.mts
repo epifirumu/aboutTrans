@@ -73,33 +73,25 @@ export default defineConfig({
     search: {
       provider: 'algolia',
       options: {
-        appId: '116OHOGKSO',
-        apiKey: 'ac690e86bfae8e8965ca0eb54624758b',
-        indexName: 'index_ab_vitepress_crawls',
+        mode: 'sidePanel',
         askAi: {
           assistantId: 'LPOC8VnwcNjG',
-          sidePanel: {
-            // 镜像 @docsearch/sidepanel-js SidepanelProps API
-            panel: {
-              variant: 'floating', // 或 'inline'
-              side: 'right',
-              width: '360px',
-              expandedWidth: '580px',
-              suggestedQuestions: true,
-            }
-          }
+          appId: '116OHOGKSO',
+          apiKey: 'ac690e86bfae8e8965ca0eb54624758b',
+          indexName: 'index_ab_vitepress_crawls',
+          sidePanel: true,
         },
         searchParameters: {
           facetFilters: [],
-            attributesToSnippet: [
-                "hierarchy.lvl1:15",
-                "hierarchy.lvl2:15",
-                "hierarchy.lvl3:15",
-                "hierarchy.lvl4:15",
-                "hierarchy.lvl5:15",
-                "hierarchy.lvl6:15",
-                "content:50"
-            ],
+      //     attributesToSnippet: [
+      //     "hierarchy.lvl1:15",
+      //     "hierarchy.lvl2:15",
+      //     "hierarchy.lvl3:15",
+      //     "hierarchy.lvl4:15",
+      //     "hierarchy.lvl5:15",
+      //     "hierarchy.lvl6:15",
+      //     "content:50"
+      // ],
         },
         locales: {
           root: {
@@ -123,11 +115,6 @@ export default defineConfig({
                   searchInputLabel: '搜索内容',
                   backToKeywordSearchButtonText: '返回关键词搜索',
                   backToKeywordSearchButtonAriaLabel: '返回关键词搜索',
-                  newConversationPlaceholder: '提问',
-                  conversationHistoryTitle: '我的对话历史',
-                  startNewConversationText: '开始新的对话',
-                  viewConversationHistoryText: '对话历史',
-                  threadDepthErrorPlaceholder: '对话已达上限'
                 },
                 startScreen: {
                   recentSearchesTitle: '搜索历史',
@@ -138,11 +125,6 @@ export default defineConfig({
                   removeFavoriteSearchButtonTitle: '从收藏中移除',
                   recentConversationsTitle: '最近的对话',
                   removeRecentConversationButtonTitle: '从历史记录中删除对话',
-                },
-                newConversation: {
-                  newConversationTitle: '有什么想问的吗？',
-                  newConversationDescription:
-                    '我会帮助您搜索文档，帮您快速了解网站内容。'
                 },
                 errorScreen: {
                   titleText: '无法获取结果',
@@ -162,19 +144,15 @@ export default defineConfig({
                   disclaimerText: '结果由 AI 生成，请注意核查。',
                   relatedSourcesText: '相关来源',
                   thinkingText: '思考中...',
-                  copyButtonText: '复制',
-                  copyButtonCopiedText: '已复制！',
-                  copyButtonTitle: '复制',
-                  likeButtonTitle: '喜欢',
-                  dislikeButtonTitle: '不喜欢',
-                  thanksForFeedbackText: '感谢你的反馈！',
                   preToolCallText: '搜索中...',
                   duringToolCallText: '搜索 ',
                   afterToolCallText: '已搜索',
                   stoppedStreamingText: '你已停止此回复',
                   errorTitleText: '聊天错误',
                   threadDepthExceededMessage: '由于对话过长，为保持回答准确，此对话已关闭。',
-                  startNewConversationButtonText: '开始新的对话'
+                },
+                newConversation: {
+                  newConversationTitle: '有什么想问的吗？',
                 },
                 footer: {
                   selectText: '选择',
@@ -191,52 +169,31 @@ export default defineConfig({
               }
             },
               askAi: {
-                sidePanel: {
-                  button: {
-                    translations: {
-                      buttonText: '询问 AI',
-                      buttonAriaLabel: '询问 AI'
-                    }
-                  },
                   panel: {
                     translations: {
-                      header: {
-                        title: '询问 AI',
-                        conversationHistoryTitle: '我的对话历史',
-                        newConversationText: '开始新的对话',
-                        viewConversationHistoryText: '对话历史'
-                      },
                       promptForm: {
-                        promptPlaceholderText: '在此处输入问题',
+                        promptPlaceholderText: '在这里输入问题',
                         promptAnsweringText: '正在回答...',
-                        promptAskAnotherQuestionText: '再问一个问题',
-                        promptDisclaimerText: '回答由 AI 生成，可能会出错。',
-                        promptLabelText: '按回车发送，Shift+回车换行。',
+                        promptAskAnotherQuestionText: '继续向 AI 提问',
+                        promptDisclaimerText: '结果由 AI 生成，请注意核查。',
+                        promptLabelText: '按回车发送，Shift + 回车换行。',
                         promptAriaLabelText: '问题输入框'
                       },
                       conversationScreen: {
                         preToolCallText: '搜索中...',
                         searchingText: '搜索中...',
                         toolCallResultText: '已搜索',
-                        conversationDisclaimer: '回答由 AI 生成，可能会出错。请核实。',
+                        conversationDisclaimer: '结果由 AI 生成，请注意核查。',
                         reasoningText: '推理中...',
                         thinkingText: '思考中...',
                         relatedSourcesText: '相关来源',
                         stoppedStreamingText: '你已停止此回复',
-                        copyButtonText: '复制',
-                        copyButtonCopiedText: '已复制！',
-                        likeButtonTitle: '喜欢',
-                        dislikeButtonTitle: '不喜欢',
-                        thanksForFeedbackText: '感谢你的反馈！',
                         errorTitleText: '聊天错误'
                       },
                       newConversationScreen: {
                         titleText: '有什么想问的吗？',
-                        introductionText:
-                          '我可以搜索文档，帮您快速了解网站内容。'
-                      },
                       logo: {
-                        poweredByText: '由…提供支持'
+                        poweredByText: '搜索提供'
                       }
                     }
                   }
