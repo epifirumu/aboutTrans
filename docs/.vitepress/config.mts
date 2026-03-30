@@ -1,6 +1,5 @@
 import { defineConfig, type HeadConfig } from 'vitepress'
 import { fileURLToPath } from 'node:url'
-import { existsSync } from 'node:fs'
 import path from 'node:path'
 import footnote from 'markdown-it-footnote'
 import UnoCSS from 'unocss/vite'
@@ -12,44 +11,56 @@ function getCurrentYear(): number {
   return currentTime.getFullYear()
 }
 
-function resolveThemeDefaultOverride(source: string, importer?: string) {
-  if (!importer || !/^\.{1,2}\//.test(source)) {
-    return
-  }
+type ThemeDefaultOverrideAliasEntry =
+  | string
+  | {
+      source: string
+      target: string
+    }
 
-  const normalizedImporter = importer.replace(/\\/g, '/')
-  const marker = '/theme-default/'
-  const markerIndex = normalizedImporter.lastIndexOf(marker)
+/**
+ * Build aliases for `docs/.vitepress/theme/overrides/theme-default/**`.
+ *
+ * Shorthand entry (`'components/Foo.vue'`) means:
+ * - source: `./Foo.vue`
+ * - target: `components/Foo.vue`
+ *
+ * Use explicit form (`{ source, target }`) when source specifier does not
+ * match `./<basename>`.
+ */
+function createThemeDefaultOverrideAliases(
+  entries: readonly ThemeDefaultOverrideAliasEntry[]
+) {
+  const usedSources = new Set<string>()
 
-  if (markerIndex < 0) {
-    return
-  }
+  return entries.map((entry) => {
+    const source =
+      typeof entry === 'string'
+        ? `./${path.posix.basename(entry)}`
+        : entry.source
+    const target = typeof entry === 'string' ? entry : entry.target
 
-  const importerInThemeDefault = normalizedImporter.slice(
-    markerIndex + marker.length
-  )
-  const importerDir = path.posix.dirname(importerInThemeDefault)
-  const targetInThemeDefault = path.posix.normalize(
-    path.posix.join(importerDir, source)
-  )
+    if (usedSources.has(source)) {
+      throw new Error(
+        `[vitepress theme overrides] duplicated source alias "${source}". ` +
+          'Use explicit { source, target } entries to disambiguate.'
+      )
+    }
 
-  if (targetInThemeDefault.startsWith('..')) {
-    return
-  }
+    usedSources.add(source)
 
-  const overridePath = fileURLToPath(
-    new URL(
-      // Mirror path under `docs/.vitepress/theme/overrides/theme-default/**`
-      // Example:
-      // - theme-default/components/VPDocFooterLastUpdated.vue
-      // => docs/.vitepress/theme/overrides/theme-default/components/VPDocFooterLastUpdated.vue
-      `./theme/overrides/theme-default/${targetInThemeDefault}`,
-      import.meta.url
-    )
-  )
-
-  return existsSync(overridePath) ? overridePath : undefined
+    return {
+      find: source,
+      replacement: fileURLToPath(
+        new URL(`./theme/overrides/theme-default/${target}`, import.meta.url)
+      )
+    }
+  })
 }
+
+const themeDefaultOverrideAliases = createThemeDefaultOverrideAliases([
+  'components/VPDocFooterLastUpdated.vue'
+] as const)
 
 export default defineConfig({
   title: 'aboutTrans',
@@ -83,14 +94,10 @@ export default defineConfig({
     return head
   },
   vite: {
+    resolve: {
+      alias: [...themeDefaultOverrideAliases],
+    },
     plugins: [
-      {
-        name: 'vitepress-docs-theme-overrides',
-        enforce: 'pre',
-        resolveId(source, importer) {
-          return resolveThemeDefaultOverride(source, importer)
-        }
-      },
       UnoCSS(),
     ],
   },
@@ -241,7 +248,7 @@ export default defineConfig({
     },
     footer: {
       message: '本站内容基于 CC BY 4.0 许可发布',
-      copyright: `版权所有 © 2023-${new Date().getFullYear()} AB aboutTrans`,
+      copyright: `版权所有 © 2023-${getCurrentYear()} AB aboutTrans`,
     },
     docFooter: {
       prev: '上一页',
