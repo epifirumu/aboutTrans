@@ -1,4 +1,7 @@
 import { defineConfig, type HeadConfig } from 'vitepress'
+import { fileURLToPath } from 'node:url'
+import { existsSync } from 'node:fs'
+import path from 'node:path'
 import footnote from 'markdown-it-footnote'
 import UnoCSS from 'unocss/vite'
 
@@ -7,6 +10,45 @@ function getCurrentYear(): number {
   const utc = now.getTime() + (now.getTimezoneOffset() * 60000)
   const currentTime = new Date(utc + (8 * 3600000))
   return currentTime.getFullYear()
+}
+
+function resolveThemeDefaultOverride(source: string, importer?: string) {
+  if (!importer || !/^\.{1,2}\//.test(source)) {
+    return
+  }
+
+  const normalizedImporter = importer.replace(/\\/g, '/')
+  const marker = '/theme-default/'
+  const markerIndex = normalizedImporter.lastIndexOf(marker)
+
+  if (markerIndex < 0) {
+    return
+  }
+
+  const importerInThemeDefault = normalizedImporter.slice(
+    markerIndex + marker.length
+  )
+  const importerDir = path.posix.dirname(importerInThemeDefault)
+  const targetInThemeDefault = path.posix.normalize(
+    path.posix.join(importerDir, source)
+  )
+
+  if (targetInThemeDefault.startsWith('..')) {
+    return
+  }
+
+  const overridePath = fileURLToPath(
+    new URL(
+      // Mirror path under `docs/.vitepress/theme/overrides/theme-default/**`
+      // Example:
+      // - theme-default/components/VPDocFooterLastUpdated.vue
+      // => docs/.vitepress/theme/overrides/theme-default/components/VPDocFooterLastUpdated.vue
+      `./theme/overrides/theme-default/${targetInThemeDefault}`,
+      import.meta.url
+    )
+  )
+
+  return existsSync(overridePath) ? overridePath : undefined
 }
 
 export default defineConfig({
@@ -42,6 +84,13 @@ export default defineConfig({
   },
   vite: {
     plugins: [
+      {
+        name: 'vitepress-docs-theme-overrides',
+        enforce: 'pre',
+        resolveId(source, importer) {
+          return resolveThemeDefaultOverride(source, importer)
+        }
+      },
       UnoCSS(),
     ],
   },
@@ -62,8 +111,11 @@ export default defineConfig({
     lastUpdated: {
       text: '当前页面最后更新于',
       formatOptions: {
-        dateStyle: 'short',
-      }
+        forceLocale: true,
+        dateStyle: 'medium'
+      },
+      // @ts-expect-error docs-only option consumed by custom theme component VPDocFooterLastUpdated.vue
+      dateTimeSpacing: true
     },
     editLink: {
       pattern: 'https://github.com/AB-aboutTrans/aboutTrans/edit/main/docs/:path',
