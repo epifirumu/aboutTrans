@@ -7,13 +7,16 @@
     "@unocss/preset-icons": "^66.1.0-beta.11",
     "@unocss/preset-mini": "^66.4.2",
     "unocss": "^66.1.0-beta.11",
-    "vitepress": "^2.0.0-alpha.16"
+    "vitepress": "^2.0.0-alpha.16",
+    "wrangler": "^4.100.0"
   },
   "scripts": {
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "docs:cfbuild": "git fetch --unshallow && vitepress build docs"
+    "docs:cfbuild": "git fetch --unshallow && vitepress build docs",
+    "deploy": "npm run docs:build && wrangler deploy",
+    "preview": "npm run docs:build && wrangler dev"
   },
   "dependencies": {
     "@vueuse/core": "^13.1.0",
